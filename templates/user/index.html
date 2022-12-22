@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    User @{{ user.username }} details - Bloglite
+{% endblock %}
+
+{% block content %}
+    <h5 class="text-muted">@{{ user.username }}</h5>
+    <h1>{{ user.fname }}</h1>
+    <h1>{{ user.lname }}</h1>
+    <h2></h2>
+{% endblock content %}

@@ -1,2 +1,4 @@
 .bin
 .env
+bin
+__pycache__
