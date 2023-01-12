@@ -6,12 +6,13 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return "hello world"
+    return render_template("index.html")
     
 
 @app.route('/user/<id>', methods=['GET'])
 def get_user(id):
     return render_template("user/index.html", 
+    profileactive="active",
     user = {"username": "sayan", "fname": "Sayan", "lname": "Ghosh", "about": "I code stuff", "id": id})
 
 
