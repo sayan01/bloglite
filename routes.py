@@ -48,47 +48,41 @@ def delete_user(id):
 
 @app.route('/login', methods=['GET','POST'])
 def login():
-    username, password = None, None
     form = UserForm()
     # Validate Form
     if request.method == 'POST':
-        username = form.username.data
-        password = form.password.data
-        form.username.data = ''
-        form.password.data = ''
-        user = User.query.filter_by(username=username).first()
+        user = User.query.filter_by(username=form.username.data).first()
         if not user:
             abort(404)
-        if hashpass(username, password) == user.passhash:
+        if hashpass(form.username.data, form.password.data) == user.passhash:
             flash('Login successful')
             return redirect(location=url_for("get_users"))
         else:
             flash('Login failed')
-            pass # go to return render template below
     return render_template("user/login.html",
-        username = username,
-        password = password,
         form = form,
         loginactive="active")
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    username, password, fname, lname, about = [None]*5
     form = UserForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user:
             flash('username already taken')
         else:
-            username, password, fname, lname, about = form.username.data, form.password.data, form.fname.data, form.lname.data, form.about.data
-            user = User(username=username, passhash=hashpass(username,password), fname=fname, lname=lname, about=about)
+            user = User(username=form.username.data, 
+                passhash=hashpass(form.username.data,form.password.data), 
+                fname=form.fname.data, 
+                lname=form.lname.data, 
+                about=form.about.data
+            )
             db.session.add(user)
             db.session.commit()
-            form.username.data, form.password.data, form.fname.data, form.lname.data, form.about.data = ['']*5
             flash('Registration Successful')
+            return redirect(location=url_for("login"))
     users = User.query.order_by(User.joined)
-    return render_template("user/register.html", registeractive="active",
-    username = username, password = password, fname = fname, lname = lname, about = about, form=form, users=users)
+    return render_template("user/register.html", registeractive="active", form=form)
 
 # error pages
 # invalid url

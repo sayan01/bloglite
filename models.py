@@ -1,10 +1,12 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 from app import app
 
 db = SQLAlchemy(app)
 db.init_app(app)
+migrate = Migrate(app, db)
 
 # Creating Model
 class User(db.Model):
@@ -15,7 +17,7 @@ class User(db.Model):
     fname = db.Column(db.String(50), nullable=False)
     lname = db.Column(db.String(50))
     about = db.Column(db.String(256), nullable=False)
-    joined = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    joined = db.Column(db.String, nullable=False, default=datetime.utcnow)
     
     def __repr__(self) -> str:
         return f'username: {self.username}\nName: {self.fname} {self.lname}'
