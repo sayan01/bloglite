@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Login - Bloglite
+{% endblock %}
+
+{% block content %}
+    <h1 class="display-1">BlogLite Login</h1>
+    {% if username %}
+        <h1>Hello {{ username }}</h1>
+    {% else %}
+        <h1>Enter credentials:</h1>
+        <hr/>
+        <form action="" method="post">
+            {{ form.hidden_tag() }}
+            {{ form.username.label(class="form-label") }}
+            {{ form.username(class="form-control") }}
+            <br/>
+            {{ form.password.label(class="form-label") }}
+            {{ form.password(class="form-control") }}
+            <br>
+            {{ form.submit(class="btn btn-primary") }}
+        </form>
+    {% endif %}
+    
+{% endblock content %}

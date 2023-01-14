@@ -6,9 +6,11 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
-        <a class="nav-link {{ homeactive }}" href="/">Home</a>
-        <a class="nav-link {{ searchactive }}" href="/search">Search</a>
-        <a class="nav-link {{ profileactive }}" href="/user/sayan">Profile</a>
+        <a class="nav-link {{ homeactive }}" href="{{url_for('home')}}">Home</a>
+        <a class="nav-link {{ searchactive }}" href="{{ url_for('search') }}">Search</a>
+        <a class="nav-link {{ profileactive }}" href="{{ url_for('get_user', id='sayan') }}">Profile</a>
+        <a class="nav-link {{ profileactive }}" href="{{ url_for('login') }}">Login</a>
+        <a class="nav-link {{ profileactive }}" href="{{ url_for('register') }}">Register</a>
       </div>
     </div>
   </div>

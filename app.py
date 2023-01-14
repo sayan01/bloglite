@@ -1,28 +1,19 @@
 #!/bin/env python3
-import sys
-from flask import Flask, render_template
+from flask import Flask
 
 app = Flask(__name__)
 
-@app.route('/')
-def home():
-    return render_template("index.html")
-    
+# configure Flask app
+import config
 
-@app.route('/user/<id>', methods=['GET'])
-def get_user(id):
-    return render_template("user/index.html", 
-    profileactive="active",
-    user = {"username": "sayan", "fname": "Sayan", "lname": "Ghosh", "about": "I code stuff", "id": id})
+# Import Flask-WTF forms classes
+from forms import *
 
+# Init DB and declare all db models
+from models import *
 
-# error pages
-# invalid url
-@app.errorhandler(404)
-def error404(e):
-    return render_template("error/404.html", error=e), 404
-
-
+# Init routes
+from routes import *
 
 if __name__ == '__main__':
     app.run()

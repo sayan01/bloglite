@@ -1,0 +1,57 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Register - Bloglite
+{% endblock %}
+
+{% block content %}
+    <h1 class="display-1">BlogLite Register</h1>
+    {% if username %}
+        <h1>Hello {{ username }}! Registration Successful</h1>
+    {% else %}
+        <h1>Create New User:</h1>
+        <hr/>
+        <form action="" method="post">
+            {{ form.hidden_tag() }}
+            {{ form.username.label(class="form-label") }}
+            {{ form.username(class="form-control") }}
+
+            {{ form.password.label(class="form-label") }}
+            {{ form.password(class="form-control") }}
+
+            {{ form.fname.label(class="form-label") }}
+            {{ form.fname(class="form-control") }}
+
+            {{ form.lname.label(class="form-label") }}
+            {{ form.lname(class="form-control") }}
+
+            {{ form.about.label(class="form-label") }}
+            {{ form.about(class="form-control") }}
+
+            {{ form.submit(class="btn btn-primary") }}
+        </form>    
+    {% endif %}
+
+    {% if users %}
+        <h1>Users:</h1>
+        <table class="table table-hover table-bordered table-striped">
+            <thead> <tr>
+                <th>User Id</th>
+                <th>username</th>
+                <th>Name</th>
+                <th>About</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for user in users %} <tr>
+                    <td>{{user.id}}</td>
+                    <td>{{user.username}}</td>
+                    <td>{{user.fname}} {{user.lname}}</td>
+                    <td>{{user.about}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+    
+{% endblock content %}
