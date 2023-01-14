@@ -44,7 +44,22 @@ def edit_user(id):
 
 @app.route('/user/delete/<int:id>', methods=['GET', 'POST'])
 def delete_user(id):
-    return Response("Hello")
+    user = User.query.get_or_404(id)
+    if not user:
+        abort(404)
+    if request.method == 'GET' or not request.form['sure']:
+        return render_template("user/delete.html", user = user)
+    else:
+        try:
+            db.session.delete(user)
+            db.session.commit()
+            flash(f"User @{user.username} Deleted successfully")
+            return redirect(location=url_for("get_users"))
+        except Exception as e:
+            flash("Error Occurred while deleting user")
+            print(e)
+            abort(500)
+
 
 @app.route('/login', methods=['GET','POST'])
 def login():
@@ -89,3 +104,8 @@ def register():
 @app.errorhandler(404)
 def error404(e):
     return render_template("error/404.html", error=e), 404
+    
+# internal error
+@app.errorhandler(500)
+def error500(e):
+    return render_template("error/500.html", error=e), 500
