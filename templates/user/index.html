@@ -1,12 +1,33 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    User @{{ user.username }} details - Bloglite
+    User details - Bloglite
 {% endblock %}
 
 {% block content %}
-    <h5 class="text-muted">@{{ user.username }}</h5>
-    <h1>{{ user.fname }}</h1>
-    <h1>{{ user.lname }}</h1>
-    <h2>{{ user.id }}</h2>
+    <table class="table table-hover table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>id</th>
+                <th>username</th>
+                <th>Name</th>
+                <th>About</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{user.id}}</td>
+                <td>{{user.username}}</td>
+                <td>{{user.fname}} {{user.lname}}</td>
+                <td>{{user.about}}</td>
+                <td>
+                    <a href="{{url_for('edit_user', id=user.id)}}" class="btn btn-primary">Edit</a>
+                    <a href="{{url_for('delete_user', id=user.id)}}" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 {% endblock content %}

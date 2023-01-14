@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Edit @{{user.username}} Details - Bloglite
+{% endblock %}
+
+{% block content %}
+    <h1 class="display-1">Edit @{{user.username}} details</h1>
+    <h1>Edit Details:</h1>
+    <hr/>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        {{ form.username.label(class="form-label") }}
+        {{ form.username(class="form-control", disabled=True, readonly=True) }}
+
+        {{ form.fname.label(class="form-label") }}
+        {{ form.fname(class="form-control") }}
+
+        {{ form.lname.label(class="form-label") }}
+        {{ form.lname(class="form-control") }}
+
+        {{ form.about.label(class="form-label") }}
+        {{ form.about(class="form-control") }}
+
+        {{ form.submit(class="btn btn-primary") }}
+    </form>    
+
+    
+{% endblock content %}

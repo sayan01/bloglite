@@ -1,4 +1,4 @@
-from flask import render_template, flash
+from flask import *
 from models import *
 from forms import *
 from auth import *
@@ -12,35 +12,69 @@ def home():
 def search():
     return render_template("search/index.html")
 
-@app.route('/user/<id>', methods=['GET'])
-def get_user(id):
+@app.route('/user/', methods=['GET'])
+def get_users():
+    users = User.query.all()
     return render_template("user/index.html", 
     profileactive="active",
-    user = {"username": "sayan", "fname": "Sayan", "lname": "Ghosh", "about": "I code stuff", "id": id})
+    users = users
+    )
+
+@app.route('/user/edit/<int:id>', methods=['GET', 'POST'])
+def edit_user(id):
+    form = UserForm()
+    user = User.query.get_or_404(id)
+    if not user:
+        abort(404)
+    if request.method == 'POST':
+        print('validated on submit')
+        user.fname, user.lname, user.about = form.fname.data, form.lname.data, form.about.data
+        try:
+            db.session.commit()
+            flash('User Details Edit Successful')
+            return redirect(location=url_for("get_users"))
+        except Exception as e:
+            flash('Some unknown error occured')
+            abort(500)
+    else:
+        print("not validated")
+        form.username.data, form.fname.data, form.lname.data, form.about.data = user.username, user.fname, user.lname, user.about
+        return render_template("user/edit.html", profileactive="active", user = user, form = form)
+
+
+@app.route('/user/delete/<int:id>', methods=['GET', 'POST'])
+def delete_user(id):
+    return Response("Hello")
 
 @app.route('/login', methods=['GET','POST'])
 def login():
     username, password = None, None
-    form = LoginForm()
+    form = UserForm()
     # Validate Form
-    if form.validate_on_submit():
+    if request.method == 'POST':
         username = form.username.data
         password = form.password.data
         form.username.data = ''
         form.password.data = ''
-        if password == "12345678":
+        user = User.query.filter_by(username=username).first()
+        if not user:
+            abort(404)
+        if hashpass(username, password) == user.passhash:
             flash('Login successful')
+            return redirect(location=url_for("get_users"))
         else:
             flash('Login failed')
+            pass # go to return render template below
     return render_template("user/login.html",
         username = username,
         password = password,
-        form = form)
+        form = form,
+        loginactive="active")
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     username, password, fname, lname, about = [None]*5
-    form = RegisterForm()
+    form = UserForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user:
@@ -53,7 +87,7 @@ def register():
             form.username.data, form.password.data, form.fname.data, form.lname.data, form.about.data = ['']*5
             flash('Registration Successful')
     users = User.query.order_by(User.joined)
-    return render_template("user/register.html",
+    return render_template("user/register.html", registeractive="active",
     username = username, password = password, fname = fname, lname = lname, about = about, form=form, users=users)
 
 # error pages

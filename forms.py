@@ -1,19 +1,8 @@
 from flask_wtf import *
 from wtforms import *
 from wtforms.validators import *
-
-# Login Form Class
-class LoginForm(FlaskForm):
-    username = StringField("Username", validators=[DataRequired(),
-        Length(max=32)])
-    password = PasswordField("Password", validators=[DataRequired(), 
-        Length(min=8,
-        message="Password should be atleast 8 characteres long")])
-    submit = SubmitField("Login")
-
-
 # Form Class Register
-class RegisterForm(FlaskForm):
+class UserForm(FlaskForm):
     username = StringField("Username", validators=[DataRequired(),
         Length(max=32)])
     password = PasswordField("Password", validators=[DataRequired(), 

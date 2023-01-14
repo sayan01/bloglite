@@ -8,9 +8,9 @@
       <div class="navbar-nav">
         <a class="nav-link {{ homeactive }}" href="{{url_for('home')}}">Home</a>
         <a class="nav-link {{ searchactive }}" href="{{ url_for('search') }}">Search</a>
-        <a class="nav-link {{ profileactive }}" href="{{ url_for('get_user', id='sayan') }}">Profile</a>
-        <a class="nav-link {{ profileactive }}" href="{{ url_for('login') }}">Login</a>
-        <a class="nav-link {{ profileactive }}" href="{{ url_for('register') }}">Register</a>
+        <a class="nav-link {{ profileactive }}" href="{{ url_for('get_users') }}">Profile</a>
+        <a class="nav-link {{ loginactive }}" href="{{ url_for('login') }}">Login</a>
+        <a class="nav-link {{ registeractive }}" href="{{ url_for('register') }}">Register</a>
       </div>
     </div>
   </div>
