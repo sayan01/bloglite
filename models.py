@@ -22,6 +22,8 @@ class User(db.Model, UserMixin):
     joined = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow)
 
     posts = db.relationship('Post', backref='author')
+    comments = db.relationship('Comment', backref='author')
+    votes = db.relationship('Vote', backref='author')
 
     @property
     def password(self):
@@ -46,8 +48,30 @@ class Post(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
+    comments = db.relationship('Comment', backref='post')
+    votes = db.relationship('Vote', backref='post')
+    
+    @property
+    def score(self):
+        return sum([vote.score for vote in self.votes ])
+
     def __repr__(self) -> str:
         return f'<Post {self.id} "{self.title}">'
+
+
+class Comment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.Text, nullable=False)
+    time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'))
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+
+class Vote(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    score = db.Column(db.Integer, nullable=False)
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'))
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 
 with app.app_context():

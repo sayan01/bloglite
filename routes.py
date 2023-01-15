@@ -167,7 +167,14 @@ def add_post():
 @login_required
 def view_post(id):
     post = Post.query.get_or_404(id)
-    return render_template("post/view.html", post=post, homeactive="active")
+    votes = Vote.query.filter_by(author=current_user, post=post).all()
+    liked=disliked=False
+    if votes:
+        if votes[0].score == 1: liked = True
+        else: disliked = True
+    form = CommentForm()
+    return render_template("post/view.html", post=post, homeactive="active", 
+        form=form, liked=liked, disliked=disliked)
     
 @app.route('/post/edit/<int:id>', methods=['GET','POST'])
 @login_required
@@ -214,6 +221,51 @@ def delete_post(id):
         flash("Please confirm that you are sure")
     return render_template('/post/delete.html', post=post)
         
+
+# Vote post control ----------------------------------------------------------------------------
+
+@app.route('/post/vote/<int:id>/<int:score>')
+@login_required
+def vote_post(id:int, score:int):
+    score = score if score == 1 else -1
+    post = Post.query.get_or_404(id)
+    votes = Vote.query.filter_by(post=post, author=current_user).all()
+    vote = None if not votes else votes[0]
+    try:
+        if vote:
+            if vote.score == score:
+                db.session.delete(vote)
+            else:
+                vote.score = score
+        else:
+            vote = Vote(score=score, post=post, author=current_user)
+            db.session.add(vote)
+        db.session.commit()
+        return redirect(location=url_for('view_post', id=id))
+    except Exception as e:
+        flash("Oops something went wrong")
+        abort(500, description=e)
+
+
+# Comment control -------------------------------------------------------------------------------
+
+@app.route('/post/comment/add/<int:id>', methods=['POST'])
+@login_required
+def add_comment(id): # id is post.id
+    post = Post.query.get_or_404(id)
+    try:
+        form = CommentForm()
+        assert form.validate_on_submit()
+        comment = Comment(content=form.content.data, author=current_user, post=post)
+        db.session.add(comment)
+        db.session.commit()
+        return redirect(location=url_for('view_post', id=id))
+    except Exception as e:
+        flash("Oops something went wrong")
+        abort(500, description=e)
+
+
+
 
 # Error pages ------------------------------------------------------------------------------------
 # invalid url

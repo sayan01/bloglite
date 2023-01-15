@@ -58,3 +58,12 @@ class PostForm(FlaskForm):
         ]
     )
     submit = SubmitField("Post")
+
+class CommentForm(FlaskForm):
+    content = StringField("Comment",
+        validators=[
+            DataRequired(message="Comment cannot be empty"),
+            Length(max=200, message="Comment cannot be longer than 200 characters")
+        ]
+    )
+    submit = SubmitField("Comment")

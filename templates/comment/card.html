@@ -1,0 +1,23 @@
+<div class="card mb-3" style="width: clamp(10rem, 90%, 80rem)">
+    <div class="row g-0">
+        <div class="col-lg-1 d-flex align-items-center">
+            <img src="https://api.dicebear.com/5.x/pixel-art/svg?seed={{comment.author.username}}" 
+            class="img-fluid rounded-start" alt="profile picture">
+        </div>
+        <div class="col-lg-11">
+            <div class="card-header">
+                by
+                {{comment.author.name}}
+                <a class="link-primary" href="{{url_for('profile', username=comment.author.username)}}">
+                    @{{comment.author.username}}
+                </a>
+            </div>
+            <div class="card-body">
+                <p class="card-text">{{comment.content}}</p>
+            </div>
+            <div class="card-footer text-muted">
+                at {{comment.time}}
+            </div>
+        </div>
+    </div>
+</div>
