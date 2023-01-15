@@ -26,14 +26,5 @@
 {% endblock content %}
 
 {% block style %}
-    <style>
-        .cards > .card{
-            transition: all 100ms ease-in-out;
-        }
-        .cards > .card:hover{
-            border-color: var(--bs-text-dark);
-            transform: scale(1.05);
-            cursor: pointer;
-        }
-    </style>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/cards.css')}}">
 {% endblock %}

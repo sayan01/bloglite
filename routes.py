@@ -10,39 +10,53 @@ from app import app
 @login_required
 def home():
     posts = Post.query.order_by(Post.time)
-    return render_template("index.html", posts=posts, homeactive="active", current_user=current_user)
+    return render_template("index.html", posts=posts, homeactive="active")
     
 # Users -------------------------------------------------------------------------------
 
 @app.route('/user/search')
 @login_required
 def search():
-    return render_template("search/index.html")
+    users = User.query.all()
+    search = request.args.get('search','')
+    if search:
+        users = [ user for user in users if search in user.username+user.fname+user.lname ]
+    return render_template("user/search.html", users=users, searchactive="active", search=search)
 
 @app.route('/user/', methods=['GET'])
 @login_required
-def get_users():
+def users():
     users = User.query.all()
     return render_template("user/index.html", 
     profileactive="active",
     users = users
     )
 
+@app.route('/profile/<string:username>')
+@login_required
+def profile(username):
+    user = User.query.filter_by(username=username).first()
+    if not user:
+        abort(404, description="User not found")
+    return render_template("/user/profile.html", user=user, profileactive="active")
+
 @app.route('/user/edit/<int:id>', methods=['GET', 'POST'])
 @fresh_login_required
 def edit_user(id):
     form = UserForm()
     user = User.query.get_or_404(id)
+    if user != current_user:
+        flash("You cannot edit other users")
+        return redirect(location=url_for('profile'))
     if request.method == 'POST':
-        print('validated on submit')
         user.fname, user.lname, user.about = form.fname.data, form.lname.data, form.about.data
         try:
             db.session.commit()
             flash('User Details Edit Successful')
-            return redirect(location=url_for("get_users"))
+            return redirect(location=url_for("profile"))
         except Exception as e:
             flash('Some unknown error occured')
-            abort(500)
+            abort(500, description=e)
     else:
         print("not validated")
         form.username.data, form.fname.data, form.lname.data, form.about.data = user.username, user.fname, user.lname, user.about
@@ -53,12 +67,16 @@ def edit_user(id):
 @fresh_login_required
 def delete_user(id):
     user = User.query.get_or_404(id)
+    if user != current_user:
+        flash("You cannot delete other users")
+        return redirect(location=url_for('profile'))
     if request.method == 'POST' and request.form['sure']:
         try:
             db.session.delete(user)
             db.session.commit()
-            flash(f"User @{user.username} Deleted successfully")
-            return redirect(location=url_for("get_users"))
+            assert logout_user()
+            flash(f"User @{user.username} Account Deleted successfully")
+            return redirect(location=url_for("login"))
         except Exception as e:
             flash("Error Occurred while deleting user")
             abort(500, description=e)
@@ -66,6 +84,8 @@ def delete_user(id):
         flash("Please confirm that you are sure") 
     return render_template("user/delete.html", user = user)
         
+
+# Auth -----------------------------------------------------------------------------------------------------
 
 @app.route('/user/login', methods=['GET','POST'])
 def login():
@@ -110,7 +130,7 @@ def register():
                 db.session.add(user)
                 db.session.commit()
                 flash('Registration Successful')
-                return redirect(location=url_for("login"))
+                return redirect(location=url_for("home"))
         else:
             flash_form_errors(form)
     return render_template("user/register.html", registeractive="active", form=form)

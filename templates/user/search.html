@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Search - Bloglite
+{% endblock %}
+
+{% block content %}
+    <h1 class="display-1">BlogLite Search</h1>
+    <form action="" method="get" class="d-flex align-items-center flex-row mb-5">
+        <div style="width: clamp(20rem, 80%, 80rem)">
+            <input type="text" name="search" id="search" class="form-control" value="{{search}}">
+        </div>
+        <input type="submit" value="Search" class="btn btn-primary ms-2" style="width: clamp(5rem, 20%, 10rem)">
+    </form>
+    <div class="cards d-flex align-items-center flex-column">
+        {% for user in users %}
+            {% include "user/card.html" %}
+        {% endfor %}
+    </div>
+
+{% endblock content %}
+
+{% block style %}
+    <link rel="stylesheet" href="{{url_for('static', filename='css/cards.css')}}">
+{% endblock %}

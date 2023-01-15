@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    {{user.username}} Profile - Bloglite
+{% endblock %}
+
+{% block content %}
+<div class="cards d-flex align-items-center flex-column">
+    {% include "user/card.html" %}
+</div>
+
+{% endblock content %}
