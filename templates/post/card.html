@@ -2,7 +2,13 @@
     {% if posts %}
     <a href="{{url_for('view_post', id=post.id)}}">
     {% endif %}
-    <div class="card-image"><img src="{{post.image}}" alt="image" class="card-img-top"></div>
+
+    {% if post.image %}
+    <div class="card-image">
+        <img src="{{url_for('static', filename=post.image)}}" alt="image" class="card-img-top">
+    </div>
+    {% endif %}
+    
     <div class="card-body">
         <h2 class="card-title">{{post.title}}</h2>
         <p class="card-text">{{post.caption|safe}}</p>
@@ -28,6 +34,11 @@
         }
         .card-footer > a:hover{
             text-decoration: underline;
+        }
+        .card-img-top{
+            height: clamp(100px, 150px, 200px);
+            width: auto;
+            aspect-ratio: 1/1;
         }
     </style>
 {% endblock %}

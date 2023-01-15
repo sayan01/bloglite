@@ -4,6 +4,9 @@ from models import *
 from forms import *
 from error import *
 from datetime import timedelta
+from werkzeug.utils import secure_filename
+from datetime import datetime
+import os
 from app import app
 
 @app.route('/')
@@ -148,9 +151,22 @@ def add_post():
         flash_form_errors(form)
         return render_template("post/add.html",form=form, createactive="active")
     else:
+        if form.image.data:
+            assetFolderName = "uploads"
+            parentpath = os.path.join(assetFolderName)
+            filename = secure_filename(current_user.username + "_" + str(datetime.utcnow()) + form.image.data.filename)
+            file_server_store_path = os.path.join(parentpath, filename)
+            final_path = os.path.join("static", file_server_store_path)
+            try:
+                os.mkdir(os.path.join("static", parentpath))
+            except FileExistsError:
+                pass
+            form.image.data.save(final_path)
+        else:
+            file_server_store_path=""
         post = Post(title=form.title.data, 
             caption=form.caption.data, 
-            image=form.image.data, 
+            image=file_server_store_path, 
             author=current_user
         )
         try:

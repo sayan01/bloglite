@@ -16,14 +16,13 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(32), unique=True, nullable=False)
     passhash = db.Column(db.String(128), nullable=False)
-    photo = db.Column(db.String(512), nullable=True)
     name = db.Column(db.String(50), nullable=False)
     about = db.Column(db.String(256), nullable=False)
     joined = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow)
 
-    posts = db.relationship('Post', backref='author')
-    comments = db.relationship('Comment', backref='author')
-    votes = db.relationship('Vote', backref='author')
+    posts = db.relationship('Post', backref='author', cascade="all, delete-orphan")
+    comments = db.relationship('Comment', backref='author', cascade="all, delete-orphan")
+    votes = db.relationship('Vote', backref='author', cascade="all, delete-orphan")
 
     @property
     def password(self):
@@ -48,8 +47,8 @@ class Post(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
-    comments = db.relationship('Comment', backref='post')
-    votes = db.relationship('Vote', backref='post')
+    comments = db.relationship('Comment', backref='post', cascade="all, delete-orphan")
+    votes = db.relationship('Vote', backref='post', cascade="all, delete-orphan")
     
     @property
     def score(self):
