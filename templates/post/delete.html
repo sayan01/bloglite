@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Delete Post - Bloglite
+{% endblock %}
+
+{% block content %}
+    <h1 class="display-1">Delete Post</h1>
+    <h1>Confirm Details:</h1>
+    <div class="cards d-flex align-items-center flex-column">
+        {%include "post/card.html"%}
+    </div>    
+    <hr/>
+    <form action="" method="post">
+        <input type="checkbox" name="sure" id="sure" required class="form-check-input">
+        <label for="sure" class="form-check-label">Are you sure? This cannot be undone</label>
+        <br>
+        <input type="submit" value="Delete" class="btn btn-danger">
+    </form>    
+
+    
+{% endblock content %}

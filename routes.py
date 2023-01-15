@@ -152,6 +152,23 @@ def edit_post(id):
             flash("Oops something went wrong!")
             abort(500, description=e)
 
+@app.route('/post/delete/<int:id>', methods=['GET', 'POST'])
+def delete_post(id):
+    post = Post.query.get_or_404(id)
+    if request.method == 'GET':
+        return render_template('/post/delete.html', post=post)
+    elif not request.form['sure']: 
+        flash("Please confirm that you are sure")
+        return render_template('/post/delete.html', post=post)
+    else:
+        try:
+            db.session.delete(post)
+            db.session.commit()
+            flash("Post deleted successfully")
+            return redirect(location=url_for('home'))
+        except Exception as e:
+            abort(500, description=e)
+
 
 # Error pages ------------------------------------------------------------------------------------
 # invalid url

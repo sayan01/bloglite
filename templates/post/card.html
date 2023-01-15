@@ -1,0 +1,24 @@
+<div class="card my-3 text-center" style="width: clamp(15rem, 100%, 50rem)">
+    {% if posts %}
+    <a href="{{url_for('view_post', id=post.id)}}">
+    {% endif %}
+    <div class="card-image"><img src="{{post.image}}" alt="image" class="card-img-top"></div>
+    <div class="card-body">
+        <h2 class="card-title">{{post.title}}</h2>
+        <p class="card-text">{{post.caption}}</p>
+    </div>
+    <div class="card-footer text-muted">by @{{post.author}} at {{post.time}}</div>
+    {% if posts %}
+    </a>
+    {% endif %}
+</div>
+
+
+{% block style %}
+    <style>
+        .cards a{
+            text-decoration: none;
+            color: inherit;
+        }
+    </style>
+{% endblock %}
