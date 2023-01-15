@@ -21,6 +21,8 @@ class User(db.Model, UserMixin):
     about = db.Column(db.String(256), nullable=False)
     joined = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow)
 
+    posts = db.relationship('Post', backref='author')
+
     @property
     def password(self):
         raise AttributeError('password is not a readible attribute')
@@ -33,7 +35,7 @@ class User(db.Model, UserMixin):
         return check_password_hash(pwhash=self.passhash, password=password)
     
     def __repr__(self) -> str:
-        return super().__repr__()
+        return f'<User {self.id} "{self.username}">'
 
 
 class Post(db.Model):
@@ -41,8 +43,11 @@ class Post(db.Model):
     title = db.Column(db.String(50), nullable=False)
     caption = db.Column(db.Text, nullable=False)
     image = db.Column(db.String(512), nullable=True)
-    author = db.Column(db.Integer, nullable=False)
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+    def __repr__(self) -> str:
+        return f'<Post {self.id} "{self.title}">'
 
 
 with app.app_context():

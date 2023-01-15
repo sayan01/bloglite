@@ -32,13 +32,16 @@ def users():
     users = users
     )
 
-@app.route('/profile/<string:username>')
+@app.route('/user/<string:username>')
 @login_required
 def profile(username):
     user = User.query.filter_by(username=username).first()
     if not user:
         abort(404, description="User not found")
-    return render_template("/user/profile.html", user=user, profileactive="active")
+    return render_template("/user/profile.html", 
+        user=user, 
+        profileactive="active" if user==current_user else "",
+        searchactive="active" if user!=current_user else "")
 
 @app.route('/user/edit/<int:id>', methods=['GET', 'POST'])
 @fresh_login_required
@@ -148,7 +151,7 @@ def add_post():
         post = Post(title=form.title.data, 
             caption=form.caption.data, 
             image=form.image.data, 
-            author=User.query.first().username
+            author=current_user
         )
         try:
             db.session.add(post)
@@ -170,6 +173,9 @@ def view_post(id):
 @login_required
 def edit_post(id):
     post = Post.query.get_or_404(id)
+    if post.author != current_user:
+        flash("You cannot delete someone else's posts")
+        abort(403, description="You cannot delete someone else's posts")
     form = PostForm()
     if request.method == 'GET' or not form.validate_on_submit():
         flash_form_errors(form)
@@ -193,6 +199,9 @@ def edit_post(id):
 @login_required
 def delete_post(id):
     post = Post.query.get_or_404(id)
+    if post.author != current_user:
+        flash("You cannot delete someone else's posts")
+        abort(403, description="You cannot delete someone else's posts")
     if request.method == 'POST' and request.form['sure']:
         try:
             db.session.delete(post)
@@ -211,6 +220,11 @@ def delete_post(id):
 @app.errorhandler(404)
 def error404(e):
     return render_template("error/404.html", error=e), 404
+
+# forbidden
+@app.errorhandler(403)
+def error403(e):
+    return render_template("error/403.html", error=e), 403
     
 # internal error
 @app.errorhandler(500)

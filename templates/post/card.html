@@ -7,7 +7,10 @@
         <h2 class="card-title">{{post.title}}</h2>
         <p class="card-text">{{post.caption}}</p>
     </div>
-    <div class="card-footer text-muted">by @{{post.author}} at {{post.time}}</div>
+    <div class="card-footer text-muted">
+        <a href="{{url_for('profile', username=post.author)}}">@{{post.author.username}}</a>
+        at {{post.time}}
+    </div>
     {% if posts %}
     </a>
     {% endif %}
@@ -16,9 +19,15 @@
 
 {% block style %}
     <style>
-        .cards a{
+        .card a{
             text-decoration: none;
             color: inherit;
+        }
+        .card-footer > a{
+            color: var(--bs-blue);
+        }
+        .card-footer > a:hover{
+            text-decoration: underline;
         }
     </style>
 {% endblock %}
