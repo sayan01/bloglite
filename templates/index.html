@@ -6,6 +6,7 @@
 
 {% block content %}
     <h1 class="display-1">BlogLite Home</h1>
+    <h2 class="text-muted">Welcome @{{current_user.username}}</h2>
     <a href="{{url_for('add_post')}}" class="btn btn-primary">
         <i class="fas fa-plus"></i>
         Upload Blog

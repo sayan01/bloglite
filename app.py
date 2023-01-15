@@ -12,6 +12,9 @@ from forms import *
 # Init DB and declare all db models
 from models import *
 
+# Init Flask_Login Manager
+import auth
+
 # Init routes
 from routes import *
 
