@@ -1,8 +1,5 @@
-<div class="card my-3 text-center" style="width: clamp(15rem, 100%, 50rem)">
-    {% if posts %}
+<div class="card my-3 text-center post-card" style="width: clamp(15rem, 100%, 50rem)">
     <a href="{{url_for('view_post', id=post.id)}}">
-    {% endif %}
-
     {% if post.image %}
     <div class="card-image">
         <img src="{{url_for('static', filename=post.image)}}" alt="image" class="card-img-top">
@@ -17,15 +14,13 @@
         <a href="{{url_for('profile', username=post.author)}}">@{{post.author.username}}</a>
         at {{post.time}}
     </div>
-    {% if posts %}
     </a>
-    {% endif %}
 </div>
 
 
 {% block style %}
     <style>
-        .card a{
+        .post-card > a{
             text-decoration: none;
             color: inherit;
         }

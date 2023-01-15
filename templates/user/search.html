@@ -12,11 +12,7 @@
         </div>
         <input type="submit" value="Search" class="btn btn-primary ms-2" style="width: clamp(5rem, 20%, 10rem)">
     </form>
-    <div class="cards d-flex align-items-center flex-column">
-        {% for user in users %}
-            {% include "user/card.html" %}
-        {% endfor %}
-    </div>
+   {% include "users/list.html" %}
 
 {% endblock content %}
 

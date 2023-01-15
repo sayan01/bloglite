@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    @{{thisuser.username}}'s Following - Bloglite
+{% endblock %}
+
+{% block content %}
+    <h1 class="display-1">
+        @
+        <a href="{{url_for('profile', username=thisuser.username)}}">
+        {{thisuser.username}}
+        </a>
+        's Following</h1>
+   {% include "user/list.html" %}
+
+{% endblock content %}
+
+{% block style %}
+    <link rel="stylesheet" href="{{url_for('static', filename='css/cards.css')}}">
+{% endblock %}

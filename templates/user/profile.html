@@ -7,6 +7,17 @@
 {% block content %}
 <div class="cards d-flex align-items-center flex-column">
     {% include "user/card.html" %}
+    <h2>Posts:</h2>
+    {% if user.posts | length %}
+        <div class="cards d-flex align-items-center flex-column">
+        {% for post in user.posts %}
+            {% include "post/card.html" %}
+        {% endfor %}
+        </div>
+    {% else %}
+        <h2 class="text-center mt-5">No blogs yet :(</h2>
+    {% endif %}
+
 </div>
 
 {% endblock content %}

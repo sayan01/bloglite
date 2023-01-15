@@ -13,6 +13,8 @@ from app import app
 @login_required
 def home():
     posts = Post.query.order_by(Post.time).all()
+    following = [ user2 for user2 in User.query.all() if current_user in user2.list_of_followers ]
+    posts = [ post for post in posts if post.author in following ]
     return render_template("index.html", posts=posts, homeactive="active")
     
 # Users -------------------------------------------------------------------------------
@@ -41,10 +43,12 @@ def profile(username):
     user = User.query.filter_by(username=username).first()
     if not user:
         abort(404, description="User not found")
+    followers = user.list_of_followers
+    following = [ user2 for user2 in User.query.all() if user in user2.list_of_followers ]
     return render_template("/user/profile.html", 
-        user=user, 
-        profileactive="active" if user==current_user else "",
-        searchactive="active" if user!=current_user else "")
+        user=user, followers=followers, following=following,
+        profileactive="active"
+        )
 
 @app.route('/user/edit/<int:id>', methods=['GET', 'POST'])
 @fresh_login_required
@@ -90,6 +94,40 @@ def delete_user(id):
         flash("Please confirm that you are sure") 
     return render_template("user/delete.html", user = user)
         
+
+# Follow ---------------------------------------------------------------------------------------------------
+
+@app.route('/user/follow/<int:id>')
+@login_required
+def follow_user(id: int):
+    try:
+        user = User.query.get_or_404(id)
+        if current_user in user.list_of_followers:
+            user.list_of_followers.remove(current_user)
+        else:
+            user.list_of_followers.append(current_user)
+        db.session.commit()
+        return redirect(location=url_for('profile', username=user.username))
+    except Exception as e:
+        flash("Oops something went wrong")
+        abort(500, description=e)
+
+@app.route('/user/followers/<int:id>')
+@login_required
+def followers_user(id: int):
+    user = User.query.get_or_404(id)
+    return render_template('/user/followers.html', 
+    users=user.list_of_followers, thisuser=user, searchactive="active")
+
+@app.route('/user/following/<int:id>')
+@login_required
+def following_user(id: int):
+    user = User.query.get_or_404(id)
+    following = [ user2 for user2 in User.query.all() if user in user2.list_of_followers ]
+    return render_template('/user/following.html', 
+    users=following, thisuser=user, searchactive="active")
+
+
 
 # Auth -----------------------------------------------------------------------------------------------------
 
@@ -208,9 +246,22 @@ def edit_post(id):
         return render_template("post/edit.html", form=form, post=post)
     else:
         try:
+            if form.image.data:
+                assetFolderName = "uploads"
+                parentpath = os.path.join(assetFolderName)
+                filename = secure_filename(current_user.username + "_" + str(datetime.utcnow()) + form.image.data.filename)
+                file_server_store_path = os.path.join(parentpath, filename)
+                final_path = os.path.join("static", file_server_store_path)
+                try:
+                    os.mkdir(os.path.join("static", parentpath))
+                except FileExistsError:
+                    pass
+                form.image.data.save(final_path)
+            else:
+                file_server_store_path=""
             post.title = form.title.data
             post.caption = form.caption.data
-            post.image = form.image.data
+            post.image = file_server_store_path
             db.session.commit()
             flash("Post updated successfully")
             return redirect(location=url_for('view_post', id=post.id))
