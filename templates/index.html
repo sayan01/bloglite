@@ -13,12 +13,12 @@
     </a>
     <hr>
     <h1>Blogs:</h1>
-    {% if posts %}
-    <div class="cards d-flex align-items-center flex-column">
-    {% for post in posts %}
-        {% include "post/card.html" %}
-    {% endfor %}
-    </div>
+    {% if posts | length %}
+        <div class="cards d-flex align-items-center flex-column">
+        {% for post in posts %}
+            {% include "post/card.html" %}
+        {% endfor %}
+        </div>
     {% else %}
         <h2 class="text-center mt-5">No blogs yet :(</h2>
     {% endif %}

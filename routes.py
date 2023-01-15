@@ -9,7 +9,7 @@ from app import app
 @app.route('/')
 @login_required
 def home():
-    posts = Post.query.order_by(Post.time)
+    posts = Post.query.order_by(Post.time).all()
     return render_template("index.html", posts=posts, homeactive="active")
     
 # Users -------------------------------------------------------------------------------
@@ -20,7 +20,7 @@ def search():
     users = User.query.all()
     search = request.args.get('search','')
     if search:
-        users = [ user for user in users if search in user.username+user.fname+user.lname ]
+        users = [ user for user in users if search in user.username+user.name ]
     return render_template("user/search.html", users=users, searchactive="active", search=search)
 
 @app.route('/user/', methods=['GET'])
@@ -49,7 +49,7 @@ def edit_user(id):
         flash("You cannot edit other users")
         return redirect(location=url_for('profile'))
     if request.method == 'POST':
-        user.fname, user.lname, user.about = form.fname.data, form.lname.data, form.about.data
+        user.name, user.about = form.name.data, form.about.data
         try:
             db.session.commit()
             flash('User Details Edit Successful')
@@ -59,7 +59,7 @@ def edit_user(id):
             abort(500, description=e)
     else:
         print("not validated")
-        form.username.data, form.fname.data, form.lname.data, form.about.data = user.username, user.fname, user.lname, user.about
+        form.username.data, form.name.data, form.about.data = user.username, user.name, user.about
         return render_template("user/edit.html", profileactive="active", user = user, form = form)
 
 
@@ -123,8 +123,7 @@ def register():
             else:
                 user = User(username=form.username.data, 
                     password=form.password.data, 
-                    fname=form.fname.data, 
-                    lname=form.lname.data, 
+                    name=form.name.data, 
                     about=form.about.data
                 )
                 db.session.add(user)

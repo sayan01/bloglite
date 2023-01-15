@@ -24,15 +24,10 @@ class UserForm(FlaskForm):
             EqualTo('password', message="Passwords must match")
         ]
     )
-    fname = StringField("First Name", 
+    name = StringField("Name", 
         validators=[
-            DataRequired(message="First Name cannot be empty"), 
+            DataRequired(message="Name cannot be empty"), 
             Length(max=50, message="First Name cannot be longer than 50 characters")
-        ]
-    )
-    lname = StringField("Last Name", 
-        validators=[
-            Length(max=50, message="Last Name cannot be longer than 50 characters")
         ]
     )
     about = StringField("About (Bio)", 

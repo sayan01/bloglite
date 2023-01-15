@@ -17,8 +17,7 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(32), unique=True, nullable=False)
     passhash = db.Column(db.String(128), nullable=False)
     photo = db.Column(db.String(512), nullable=True)
-    fname = db.Column(db.String(50), nullable=False)
-    lname = db.Column(db.String(50), nullable=True)
+    name = db.Column(db.String(50), nullable=False)
     about = db.Column(db.String(256), nullable=False)
     joined = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow)
 
