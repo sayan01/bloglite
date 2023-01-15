@@ -7,7 +7,7 @@ from app import app
 @app.route('/')
 def home():
     posts = Post.query.order_by(Post.time)
-    return render_template("index.html", posts=posts)
+    return render_template("index.html", posts=posts, homeactive="active")
     
 # Users -------------------------------------------------------------------------------
 
@@ -27,8 +27,6 @@ def get_users():
 def edit_user(id):
     form = UserForm()
     user = User.query.get_or_404(id)
-    if not user:
-        abort(404)
     if request.method == 'POST':
         print('validated on submit')
         user.fname, user.lname, user.about = form.fname.data, form.lname.data, form.about.data
@@ -48,9 +46,8 @@ def edit_user(id):
 @app.route('/user/delete/<int:id>', methods=['GET', 'POST'])
 def delete_user(id):
     user = User.query.get_or_404(id)
-    if not user:
-        abort(404)
     if request.method == 'GET' or not request.form['sure']:
+        if not request.form['sure']: flash("Please confirm that you are sure")
         return render_template("user/delete.html", user = user)
     else:
         try:
@@ -60,8 +57,7 @@ def delete_user(id):
             return redirect(location=url_for("get_users"))
         except Exception as e:
             flash("Error Occurred while deleting user")
-            print(e)
-            abort(500)
+            abort(500, description=e)
 
 
 @app.route('/user/login', methods=['GET','POST'])
@@ -71,7 +67,7 @@ def login():
     if request.method == 'POST':
         user = User.query.filter_by(username=form.username.data).first()
         if not user:
-            abort(404)
+            abort(404, description="User not found")
         if user.verify_password(form.password.data):
             flash('Login successful')
             return redirect(location=url_for("get_users"))
@@ -129,8 +125,14 @@ def add_post():
             abort(500, description=e)
 
 
+@app.route('/post/view/<int:id>')
+def view_post(id):
+    post = Post.query.get_or_404(id)
+    return render_template("post/view.html", post=post, homeactive="active")
+    
 
-# error pages
+
+# Error pages ------------------------------------------------------------------------------------
 # invalid url
 @app.errorhandler(404)
 def error404(e):

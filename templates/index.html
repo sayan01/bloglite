@@ -15,14 +15,16 @@
     {% if posts %}
     <div class="cards d-flex align-items-center flex-column">
     {% for post in posts %}
-        <div class="card my-3 text-center" style="width: clamp(15rem, 80%, 60rem)">
+    <div class="card my-3 text-center" style="width: clamp(15rem, 80%, 60rem)">
+            <a href="{{url_for('view_post', id=post.id)}}">
             <div class="card-image"><img src="{{post.image}}" alt="image" class="card-img-top"></div>
             <div class="card-body">
                 <h2 class="card-title">{{post.title}}</h2>
                 <p class="card-text">{{post.caption}}</p>
             </div>
             <div class="card-footer text-muted">by @{{post.author}} at {{post.time}}</div>
-        </div>
+        </a>
+    </div>
     {% endfor %}
     </div>
     {% else %}
@@ -33,6 +35,10 @@
 
 {% block style %}
     <style>
+        .cards a{
+            text-decoration: none;
+            color: inherit;
+        }
         .cards > .card{
             transition: all 100ms ease-in-out;
         }
