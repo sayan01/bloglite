@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Edit Post - Bloglite
+{% endblock %}
+
+{% block content %}
+    <h1 class="display-1">Edit Post</h1>
+    <hr/>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        {{ form.title.label(class="form-label") }}
+        {{ form.title(class="form-control") }}
+
+        {{ form.caption.label(class="form-label") }}
+        {{ form.caption(class="form-control", rows=5) }}
+
+        {{ form.image.label(class="form-label") }}
+        {{ form.image(class="form-control") }}
+
+        <br>
+        {{ form.submit(class="btn btn-primary", value="Submit") }}
+    </form>    
+
+{% endblock content %}
+
+{% block style %}
+<style>
+    .form-label{
+        margin-top: 10px;
+    }
+</style>
+{% endblock %}
+
+{% block script %}
+{% endblock %}

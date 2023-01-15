@@ -130,6 +130,27 @@ def view_post(id):
     post = Post.query.get_or_404(id)
     return render_template("post/view.html", post=post, homeactive="active")
     
+@app.route('/post/edit/<int:id>', methods=['GET','POST'])
+def edit_post(id):
+    post = Post.query.get_or_404(id)
+    form = PostForm()
+    if request.method == 'GET' or not form.validate_on_submit():
+        flash_form_errors(form)
+        form.title.data = post.title
+        form.caption.data = post.caption
+        form.image.data = post.image
+        return render_template("post/edit.html", form=form, post=post)
+    else:
+        try:
+            post.title = form.title.data
+            post.caption = form.caption.data
+            post.image = form.image.data
+            db.session.commit()
+            flash("Post updated successfully")
+            return redirect(location=url_for('view_post', id=post.id))
+        except Exception as e:
+            flash("Oops something went wrong!")
+            abort(500, description=e)
 
 
 # Error pages ------------------------------------------------------------------------------------

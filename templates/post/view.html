@@ -18,6 +18,7 @@
             <div class="card-footer text-muted">by @{{post.author}} at {{post.time}}</div>
         </div>
     </div>    
+    <a href="{{url_for('edit_post', id=post.id)}}" class="btn btn-outline-dark"><i class="fas fa-pencil"></i> Edit</a>
     <div class="comments">
         <h2>Comments:</h2>
         <h3>No comments yet</h3>

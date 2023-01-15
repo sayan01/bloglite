@@ -5,18 +5,42 @@ from wtforms.widgets import *
 
 # Form Class Register
 class UserForm(FlaskForm):
-    username = StringField("Username", validators=[DataRequired(),
-        Length(max=32)])
-    password = PasswordField("Password", validators=[DataRequired(), 
-        Length(min=8,
-        message="Password should be atleast 8 characteres long")])
-    password_confirm = PasswordField("Confirm Password", validators=[DataRequired(), 
-        Length(min=8,
-        message="Password should be atleast 8 characteres long"),
-        EqualTo('password', message="Passwords must match")])
-    fname = StringField("First Name", validators=[DataRequired(), Length(max=50)])
-    lname = StringField("Last Name", validators=[Length(max=50)])
-    about = StringField("About (Bio)", validators=[DataRequired(), Length(max=256)])
+    username = StringField("Username", 
+        validators=[
+            DataRequired(message="Username cannot be empty"),
+            Length(max=32, message="Username cannot be longer than 32 characters")
+        ]
+    )
+    password = PasswordField("Password", 
+        validators=[
+            DataRequired(message="Password cannot be empty"), 
+            Length(min=8, message="Password should be atleast 8 characteres long")
+        ]
+    )
+    password_confirm = PasswordField("Confirm Password", 
+        validators=[
+            DataRequired(message="Confirm the password"), 
+            Length(min=8, message="Password should be atleast 8 characteres long"),
+            EqualTo('password', message="Passwords must match")
+        ]
+    )
+    fname = StringField("First Name", 
+        validators=[
+            DataRequired(message="First Name cannot be empty"), 
+            Length(max=50, message="First Name cannot be longer than 50 characters")
+        ]
+    )
+    lname = StringField("Last Name", 
+        validators=[
+            Length(max=50, message="Last Name cannot be longer than 50 characters")
+        ]
+    )
+    about = StringField("About (Bio)", 
+        validators=[
+            DataRequired(message="About cannot be empty"), 
+            Length(max=256, message="About cannot be longer than 256 characters")
+        ]
+    )
     submit = SubmitField("Login")
 
 class PostForm(FlaskForm):
@@ -33,5 +57,9 @@ class PostForm(FlaskForm):
         ], 
         widget=TextArea()
     )
-    image = FileField("Photo", validators=[])
+    image = FileField("Photo", 
+        validators=[
+
+        ]
+    )
     submit = SubmitField("Post")
