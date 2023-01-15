@@ -12,11 +12,26 @@
         {{ form.hidden_tag() }}
         {{ form.username.label(class="form-label") }}
         {{ form.username(class="form-control") }}
-        <br/>
+        
         {{ form.password.label(class="form-label") }}
-        {{ form.password(class="form-control") }}
-        <br>
+        
+        <div class="password-box d-flex flex-row">
+            {{ form.password(class="form-control me-2", id="password") }}
+            <input type="checkbox" class="btn-check" id="showpass">
+            <label class="btn" for="showpass">
+                <i class="fas fa-eye" id="eye"></i>
+            </label>
+        </div>
         {{ form.submit(class="btn btn-primary") }}
     </form>
     
 {% endblock content %}
+
+
+{% block style %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+{% endblock %}
+
+{% block script %}
+    <script src="{{url_for('static', filename='js/toggle-password-eye.js')}}"></script>
+{% endblock %}

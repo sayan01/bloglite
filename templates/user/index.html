@@ -5,8 +5,9 @@
 {% endblock %}
 
 {% block content %}
-    <table class="table table-hover table-bordered table-striped">
-        <thead>
+{% if users %}
+<table class="table table-hover table-bordered table-striped">
+    <thead>
             <tr>
                 <th>id</th>
                 <th>username</th>
@@ -29,5 +30,9 @@
             </tr>
             {% endfor %}
         </tbody>
-    </table>
+    </table>    
+{% else %}
+    <h1>No users present</h1>
+    <div><a href="{{url_for('register')}}">Register</a> to create a new account</div>
+{% endif %}
 {% endblock content %}

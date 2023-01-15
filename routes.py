@@ -69,7 +69,7 @@ def login():
         user = User.query.filter_by(username=form.username.data).first()
         if not user:
             abort(404)
-        if hashpass(form.username.data, form.password.data) == user.passhash:
+        if user.verify_password(form.password.data):
             flash('Login successful')
             return redirect(location=url_for("get_users"))
         else:
@@ -81,22 +81,24 @@ def login():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = UserForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
-        if user:
-            flash('username already taken')
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            user = User.query.filter_by(username=form.username.data).first()
+            if user:
+                flash('username already taken')
+            else:
+                user = User(username=form.username.data, 
+                    password=form.password.data, 
+                    fname=form.fname.data, 
+                    lname=form.lname.data, 
+                    about=form.about.data
+                )
+                db.session.add(user)
+                db.session.commit()
+                flash('Registration Successful')
+                return redirect(location=url_for("login"))
         else:
-            user = User(username=form.username.data, 
-                passhash=hashpass(form.username.data,form.password.data), 
-                fname=form.fname.data, 
-                lname=form.lname.data, 
-                about=form.about.data
-            )
-            db.session.add(user)
-            db.session.commit()
-            flash('Registration Successful')
-            return redirect(location=url_for("login"))
-    users = User.query.order_by(User.joined)
+            [ flash(errormsg) for errormsgs in form.errors.values() for errormsg in errormsgs ]
     return render_template("user/register.html", registeractive="active", form=form)
 
 # error pages
