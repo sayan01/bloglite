@@ -33,7 +33,7 @@ class User(db.Model):
         return check_password_hash(pwhash=self.passhash, password=password)
     
     def __repr__(self) -> str:
-        return f'username: {self.username}\nName: {self.fname} {self.lname}'
+        return super().__repr__()
 
 
 class Post(db.Model):

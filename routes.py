@@ -1,14 +1,17 @@
 from flask import *
 from models import *
 from forms import *
-from auth import *
+from error import *
 from app import app
 
 @app.route('/')
 def home():
-    return render_template("index.html")
+    posts = Post.query.order_by(Post.time)
+    return render_template("index.html", posts=posts)
     
-@app.route('/search')
+# Users -------------------------------------------------------------------------------
+
+@app.route('/user/search')
 def search():
     return render_template("search/index.html")
 
@@ -61,7 +64,7 @@ def delete_user(id):
             abort(500)
 
 
-@app.route('/login', methods=['GET','POST'])
+@app.route('/user/login', methods=['GET','POST'])
 def login():
     form = UserForm()
     # Validate Form
@@ -78,7 +81,7 @@ def login():
         form = form,
         loginactive="active")
 
-@app.route('/register', methods=['GET', 'POST'])
+@app.route('/user/register', methods=['GET', 'POST'])
 def register():
     form = UserForm()
     if request.method == 'POST':
@@ -98,8 +101,34 @@ def register():
                 flash('Registration Successful')
                 return redirect(location=url_for("login"))
         else:
-            [ flash(errormsg) for errormsgs in form.errors.values() for errormsg in errormsgs ]
+            flash_form_errors(form)
     return render_template("user/register.html", registeractive="active", form=form)
+
+
+# Post ----------------------------------------------------------------------------------------
+
+@app.route('/post/add', methods=['GET', 'POST'])
+def add_post():
+    form = PostForm()
+    if request.method == 'GET' or not form.validate_on_submit():
+        flash_form_errors(form)
+        return render_template("post/add.html",form=form, createactive="active")
+    else:
+        post = Post(title=form.title.data, 
+            caption=form.caption.data, 
+            image=form.image.data, 
+            author=User.query.first().username
+        )
+        try:
+            db.session.add(post)
+            db.session.commit()
+            flash('Added post successfully')
+            return redirect(location=url_for('home'))
+        except Exception as e:
+            flash("Something went wrong while adding post")
+            abort(500, description=e)
+
+
 
 # error pages
 # invalid url
