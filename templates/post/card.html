@@ -11,7 +11,7 @@
         <p class="card-text">{{post.caption|safe}}</p>
     </div>
     <div class="card-footer text-muted">
-        <a href="{{url_for('profile', username=post.author)}}">@{{post.author.username}}</a>
+        <a href="{{url_for('profile', username=post.author.username)}}">@{{post.author.username}}</a>
         at {{post.time}}
     </div>
     </a>

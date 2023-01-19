@@ -57,13 +57,13 @@ def edit_user(id):
     user = User.query.get_or_404(id)
     if user != current_user:
         flash("You cannot edit other users")
-        return redirect(location=url_for('profile'))
+        return redirect(location=url_for('profile', username=user.username))
     if request.method == 'POST':
         user.name, user.about = form.name.data, form.about.data
         try:
             db.session.commit()
             flash('User Details Edit Successful')
-            return redirect(location=url_for("profile"))
+            return redirect(location=url_for("profile", username=user.username))
         except Exception as e:
             flash('Some unknown error occured')
             abort(500, description=e)
